@@ -10,7 +10,7 @@ data class SlashCommandInfo(
     val description: String,
     val isSubCommand: Boolean = false,
     val subCommands: List<SlashCommandInfo>,
-    val options: ImmutableMap<String, ImmutableMap<String, Any>>
+    val options: ImmutableMap<String, SlashCommandOption>
 ) {
 
 }

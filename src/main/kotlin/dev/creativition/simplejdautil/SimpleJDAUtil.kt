@@ -6,43 +6,69 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
-object EasyListenerRegistrar {
+/**
+ *
+ */
+object SimpleJDAUtil {
     private val listeners: MutableList<EventListener> = mutableListOf()
     private val adapters: MutableList<ListenerAdapter> = mutableListOf()
     private val slashCommands: MutableList<SlashCommandInfo> = mutableListOf()
     private val packageList: MutableList<String> = mutableListOf()
     private var logError = false
 
+    /**
+     * Adds a EventListener to this listener registrar.
+     * @param listener JDA's EventListener
+     */
     @JvmStatic
     fun addListener(listener: EventListener) {
         listeners.add(listener)
     }
 
+    /**
+     * Returns the list of JDA's EventListener.
+     * @return The list of JDA's EventListener.
+     */
     @JvmStatic
     private fun getListeners(): List<EventListener> {
         return listeners
     }
 
+    /**
+     * Adds an ListenerAdapter to this listener registrar.
+     * @param listener JDA's ListenerAdapter
+     */
     @JvmStatic
     fun addAdapter(adapter: ListenerAdapter) {
         adapters.add(adapter)
     }
 
+    /**
+     * Returns the list of JDA's ListenerAdapter.
+     * @return The list of JDA's ListenerAdapter.
+     */
     @JvmStatic
     fun getAdapters(): List<ListenerAdapter> {
         return adapters
     }
 
+    /**
+     * Returns the list of SlashCommandInfo.
+     * @return The list of SlashCommandInfo.
+     */
     @JvmStatic
     fun getSlashCommands(): List<SlashCommandInfo> {
         return slashCommands
     }
 
+    /**
+     * Add a slash command to this listener registrar.
+     * @param command SlashCommandInfo instance.
+     */
     @JvmStatic
     fun addSlashCommand(command: SlashCommandInfo) {
         if (command.isSubCommand)
@@ -51,6 +77,10 @@ object EasyListenerRegistrar {
         slashCommands.add(command)
     }
 
+    /**
+     * Add a search path that used for searing listeners.
+     * @param packagePath The path to search.
+     */
     @JvmStatic
     fun addSearchPath(packagePath: String) {
         if (!packagePath.endsWith("."))
@@ -59,6 +89,10 @@ object EasyListenerRegistrar {
         packageList.add(packagePath)
     }
 
+    /**
+     * Sets a search path that used for searing listeners.
+     * @param packagePathList The list of path to search.
+     */
     @JvmStatic
     fun setSearchPath(packagePathList: List<String>) {
         if (packageList.isEmpty())
@@ -73,11 +107,19 @@ object EasyListenerRegistrar {
         packageList.addAll(packagePathList)
     }
 
+    /**
+     * Sets should log error.
+     * @param logError Boolean.
+     */
     @JvmStatic
     fun setErrorLogging(logError: Boolean) {
         this.logError = logError
     }
 
+    /**
+     * Register the all slash commands.
+     * @param jda JDA instance.
+     */
     @JvmStatic
     fun registerSlashCommands(jdaInstance: JDA){
         val commands = mutableListOf<CommandData>()
@@ -91,24 +133,26 @@ object EasyListenerRegistrar {
                 val subCmd = SubcommandData(subCommands.commandName, subCommands.description)
 
                 subCommands.options.forEach { options ->
+                    val op = options.value
                     subCmd.addOption(
-                        options.value["type"] as OptionType,
-                        options.key,
-                        options.value["description"] as String,
-                        options.value["required"] as Boolean,
-                        options.value["completions"] as Boolean
+                        op.optionType,
+                        op.optionName,
+                        op.optionDescription,
+                        op.isRequired,
+                        op.hasCompletions
                     )
                 }
                 slashCommand.addSubcommands(subCmd)
             }
 
             commandInfo.options.forEach { options ->
+                val op = options.value
                 slashCommand.addOption(
-                    options.value["type"] as OptionType,
-                    options.key,
-                    options.value["description"] as String,
-                    options.value["required"] as Boolean,
-                    options.value["completions"] as Boolean
+                    op.optionType,
+                    op.optionName,
+                    op.optionDescription,
+                    op.isRequired,
+                    op.hasCompletions
                 )
             }
 
@@ -118,6 +162,11 @@ object EasyListenerRegistrar {
         jdaInstance.updateCommands().addCommands(commands).queue()
     }
 
+    /**
+     * Register the all listeners.
+     * @param jdaBuilder JDABuilder instance.
+     * @param classLoader ClassLoader.
+     */
     @JvmStatic
     fun registerListeners(jdaBuilder: JDABuilder, classLoader: ClassLoader): JDABuilder {
         initClasses(classLoader)
