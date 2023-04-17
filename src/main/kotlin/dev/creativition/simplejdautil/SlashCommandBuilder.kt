@@ -100,60 +100,12 @@ class SlashCommandBuilder private constructor(
      * @param optionName The name of option.
      * @param description The description of option.
      * @param type The optionType of option.
-     * @return The current instance of SlashCommandBuilder.
-     */
-    fun addOption(optionName: String, description: String, type: OptionType): SlashCommandBuilder {
-        options[optionName] = hashMapOf(Pair("description", description), Pair("type", type))
-        options[optionName]!!["required"] = false
-        options[optionName]!!["completions"] = false
-        return this
-    }
-
-
-    /**
-     * Add an option to this command.
-     * @param optionName The name of option.
-     * @param description The description of option.
-     * @param type The optionType of option.
      * @param required Whether the option is required.
      * @param completions Whether the option has completions.
      * @return The current instance of SlashCommandBuilder.
      */
     fun addOption(optionName: String, description: String, type: OptionType, required: Boolean, completions: Boolean): SlashCommandBuilder {
         options[optionName] = hashMapOf(Pair("description", description), Pair("type", type), Pair("required", required), Pair("completions", completions))
-        return this
-    }
-
-    /**
-     * Remove option from this command.
-     * @param optionName The name of option.
-     * @return The current instance of SlashCommandBuilder.
-      */
-    fun removeOption(optionName: String): SlashCommandBuilder {
-        options.remove(optionName)
-        return this
-    }
-
-    /**
-     * Defines whether the option is necessary for the execution of the command.
-     * @param optionName The name of option.
-     * @param isRequired Whether the option is required.
-     * @return The current instance of SlashCommandBuilder.
-     */
-    fun setOptionRequired(optionName: String, isRequired: Boolean): SlashCommandBuilder {
-        options[optionName]!!["required"] = isRequired
-        return this
-    }
-
-
-    /**
-     * Specify whether to enable options auto-completion.
-     * @param optionName The name of option.
-     * @param hasCompletion Whether the option has auto-completion.
-     * @return The current instance of SlashCommandBuilder.
-     */
-    fun setOptionHasCompletions(optionName: String, hasCompletion: Boolean): SlashCommandBuilder {
-        options[optionName]!!["completions"] = hasCompletion
         return this
     }
 
