@@ -1,12 +1,11 @@
 package dev.creativition.simplejdautil
 
 import com.google.common.collect.ImmutableMap
-import dev.creativition.simplejdautil.objects.CommandInfo
+import dev.creativition.simplejdautil.objects.SlashCommandInfo
 import net.dv8tion.jda.api.interactions.commands.OptionType
-import java.util.*
 import kotlin.collections.HashMap
 
-class CommandBuilder private constructor(
+class SlashCommandBuilder private constructor(
     private val commandName: String,
     private val description: String,
     private val isSubCommand: Boolean = false
@@ -16,28 +15,28 @@ class CommandBuilder private constructor(
 
         /**
          * Creates a command builder.
-         * @return CommandBuilder The command builder.
+         * @return SlashCommandBuilder The command builder.
          */
         @JvmStatic
-        fun createCommand(commandName: String, description: String): CommandBuilder {
+        fun createCommand(commandName: String, description: String): SlashCommandBuilder {
             if (commandName.isEmpty())
                 throw IllegalArgumentException("Command name cannot be empty")
-            return CommandBuilder(commandName, description)
+            return SlashCommandBuilder(commandName, description)
         }
 
         /**
          * Creates a sub command builder.
-         * @return CommandBuilder The sub command builder.
+         * @return SlashCommandBuilder The sub command builder.
          */
         @JvmStatic
-        fun createSubCommand(commandName: String, description: String): CommandBuilder {
+        fun createSubCommand(commandName: String, description: String): SlashCommandBuilder {
             if (commandName.isEmpty())
                 throw IllegalArgumentException("Command name cannot be empty")
-            return CommandBuilder(commandName, description, true)
+            return SlashCommandBuilder(commandName, description, true)
         }
     }
 
-    private val subCommands = mutableListOf<CommandInfo>()
+    private val subCommands = mutableListOf<SlashCommandInfo>()
     private val options: HashMap<String, HashMap<String, Any>> = HashMap()
 
 
@@ -45,17 +44,17 @@ class CommandBuilder private constructor(
      * Returns the subcommands of this command.
      * @return The list of subcommands.
      */
-    fun getSubCommands(): List<CommandInfo> {
+    fun getSubCommands(): List<SlashCommandInfo> {
         return subCommands
     }
 
 
     /**
      * Adds a subcommand to this command.
-     * @param command CommandInfo
-     * @return The current instance of CommandBuilder.
+     * @param command SlashCommandInfo
+     * @return The current instance of SlashCommandBuilder.
      */
-    fun addSubCommand(command: CommandInfo): CommandBuilder {
+    fun addSubCommand(command: SlashCommandInfo): SlashCommandBuilder {
         if (isSubCommand)
             throw IllegalArgumentException("Cannot add sub command to a sub command")
         subCommands.add(command)
@@ -65,15 +64,21 @@ class CommandBuilder private constructor(
 
     /**
      * Adds a subcommand to this command
-     * @param subCommands List of CommandInfo
+     * @param subCommands List of SlashCommandInfo
+     * @return The current instance of SlashCommandBuilder.
      */
-    fun addSubCommand(subCommands: List<CommandInfo>): CommandBuilder {
+    fun addSubCommand(subCommands: List<SlashCommandInfo>): SlashCommandBuilder {
         this.subCommands.addAll(subCommands)
         return this
     }
 
 
-    fun removeSubCommand(subCommandName: String): CommandBuilder {
+    /**
+     * Remove a specified subcommand from this command.
+     * @param subCommandName The name of the subcommand to remove.
+     * @return The current instance of SlashCommandBuilder.
+     */
+    fun removeSubCommand(subCommandName: String): SlashCommandBuilder {
         if (isSubCommand)
             throw IllegalArgumentException("Cannot use this method while creating a sub command")
         subCommands.removeIf { it.commandName == subCommandName }
@@ -95,8 +100,9 @@ class CommandBuilder private constructor(
      * @param optionName The name of option.
      * @param description The description of option.
      * @param type The optionType of option.
+     * @return The current instance of SlashCommandBuilder.
      */
-    fun addOption(optionName: String, description: String, type: OptionType): CommandBuilder {
+    fun addOption(optionName: String, description: String, type: OptionType): SlashCommandBuilder {
         options[optionName] = hashMapOf(Pair("description", description), Pair("type", type))
         options[optionName]!!["required"] = false
         options[optionName]!!["completions"] = false
@@ -111,8 +117,9 @@ class CommandBuilder private constructor(
      * @param type The optionType of option.
      * @param required Whether the option is required.
      * @param completions Whether the option has completions.
+     * @return The current instance of SlashCommandBuilder.
      */
-    fun addOption(optionName: String, description: String, type: OptionType, required: Boolean, completions: Boolean): CommandBuilder {
+    fun addOption(optionName: String, description: String, type: OptionType, required: Boolean, completions: Boolean): SlashCommandBuilder {
         options[optionName] = hashMapOf(Pair("description", description), Pair("type", type), Pair("required", required), Pair("completions", completions))
         return this
     }
@@ -120,8 +127,9 @@ class CommandBuilder private constructor(
     /**
      * Remove option from this command.
      * @param optionName The name of option.
+     * @return The current instance of SlashCommandBuilder.
       */
-    fun removeOption(optionName: String): CommandBuilder {
+    fun removeOption(optionName: String): SlashCommandBuilder {
         options.remove(optionName)
         return this
     }
@@ -130,8 +138,9 @@ class CommandBuilder private constructor(
      * Defines whether the option is necessary for the execution of the command.
      * @param optionName The name of option.
      * @param isRequired Whether the option is required.
+     * @return The current instance of SlashCommandBuilder.
      */
-    fun setOptionRequired(optionName: String, isRequired: Boolean): CommandBuilder {
+    fun setOptionRequired(optionName: String, isRequired: Boolean): SlashCommandBuilder {
         options[optionName]!!["required"] = isRequired
         return this
     }
@@ -141,17 +150,23 @@ class CommandBuilder private constructor(
      * Specify whether to enable options auto-completion.
      * @param optionName The name of option.
      * @param hasCompletion Whether the option has auto-completion.
+     * @return The current instance of SlashCommandBuilder.
      */
-    fun setOptionHasCompletions(optionName: String, hasCompletion: Boolean): CommandBuilder {
+    fun setOptionHasCompletions(optionName: String, hasCompletion: Boolean): SlashCommandBuilder {
         options[optionName]!!["completions"] = hasCompletion
         return this
     }
 
-    fun build(): CommandInfo {
+
+    /**
+     * Build a SlashCommandInfo object with all the information of this command.
+     * @return SlashCommandInfo The command object.
+     */
+    fun build(): SlashCommandInfo {
         val noptions = mutableMapOf<String, ImmutableMap<String, Any>>()
         options.forEach { option ->
             noptions[option.key] = ImmutableMap.copyOf(option.value)
         }
-        return CommandInfo(commandName, description, isSubCommand, subCommands, ImmutableMap.copyOf(noptions))
+        return SlashCommandInfo(commandName, description, isSubCommand, subCommands, ImmutableMap.copyOf(noptions))
     }
 }

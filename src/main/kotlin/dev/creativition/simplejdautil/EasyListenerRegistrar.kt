@@ -1,7 +1,7 @@
 package dev.creativition.simplejdautil
 
 import com.google.common.reflect.ClassPath
-import dev.creativition.simplejdautil.objects.CommandInfo
+import dev.creativition.simplejdautil.objects.SlashCommandInfo
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.hooks.EventListener
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 object EasyListenerRegistrar {
     private val listeners: MutableList<EventListener> = mutableListOf()
     private val adapters: MutableList<ListenerAdapter> = mutableListOf()
-    private val slashCommands: MutableList<CommandInfo> = mutableListOf()
+    private val slashCommands: MutableList<SlashCommandInfo> = mutableListOf()
     private val packageList: MutableList<String> = mutableListOf()
     private var logError = false
 
@@ -39,12 +39,12 @@ object EasyListenerRegistrar {
     }
 
     @JvmStatic
-    fun getSlashCommands(): List<CommandInfo> {
+    fun getSlashCommands(): List<SlashCommandInfo> {
         return slashCommands
     }
 
     @JvmStatic
-    fun addSlashCommand(command: CommandInfo) {
+    fun addSlashCommand(command: SlashCommandInfo) {
         if (command.isSubCommand)
             throw IllegalArgumentException("Cannot add a subcommand instance to slash command")
 
