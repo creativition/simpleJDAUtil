@@ -2,6 +2,7 @@ package dev.creativition.simplejdautil
 
 import com.google.common.collect.ImmutableMap
 import dev.creativition.simplejdautil.objects.SlashCommandInfo
+import dev.creativition.simplejdautil.objects.SlashCommandOption
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import kotlin.collections.HashMap
 
@@ -37,7 +38,7 @@ class SlashCommandBuilder private constructor(
     }
 
     private val subCommands = mutableListOf<SlashCommandInfo>()
-    private val options: HashMap<String, HashMap<String, Any>> = HashMap()
+    private val options: HashMap<String, SlashCommandOption> = HashMap()
 
 
     /**
@@ -90,7 +91,7 @@ class SlashCommandBuilder private constructor(
      * Returns the options of this command.
      * @return Map<String, HashMap<String, Any>>
      */
-    fun getOptions(): Map<String, Map<String, Any>> {
+    fun getOptions(): Map<String, SlashCommandOption> {
         return options
     }
 
@@ -105,7 +106,7 @@ class SlashCommandBuilder private constructor(
      * @return The current instance of SlashCommandBuilder.
      */
     fun addOption(optionName: String, description: String, type: OptionType, required: Boolean, completions: Boolean): SlashCommandBuilder {
-        options[optionName] = hashMapOf(Pair("description", description), Pair("type", type), Pair("required", required), Pair("completions", completions))
+        options[optionName] = SlashCommandOption(optionName, description, type, required, completions)
         return this
     }
 
@@ -115,10 +116,6 @@ class SlashCommandBuilder private constructor(
      * @return SlashCommandInfo The command object.
      */
     fun build(): SlashCommandInfo {
-        val noptions = mutableMapOf<String, ImmutableMap<String, Any>>()
-        options.forEach { option ->
-            noptions[option.key] = ImmutableMap.copyOf(option.value)
-        }
-        return SlashCommandInfo(commandName, description, isSubCommand, subCommands, ImmutableMap.copyOf(noptions))
+        return SlashCommandInfo(commandName, description, isSubCommand, subCommands, ImmutableMap.copyOf(options))
     }
 }

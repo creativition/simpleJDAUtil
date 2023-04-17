@@ -91,24 +91,26 @@ object EasyListenerRegistrar {
                 val subCmd = SubcommandData(subCommands.commandName, subCommands.description)
 
                 subCommands.options.forEach { options ->
+                    val op = options.value
                     subCmd.addOption(
-                        options.value["type"] as OptionType,
-                        options.key,
-                        options.value["description"] as String,
-                        options.value["required"] as Boolean,
-                        options.value["completions"] as Boolean
+                        op.optionType,
+                        op.optionName,
+                        op.optionDescription,
+                        op.isRequired,
+                        op.hasCompletions
                     )
                 }
                 slashCommand.addSubcommands(subCmd)
             }
 
             commandInfo.options.forEach { options ->
+                val op = options.value
                 slashCommand.addOption(
-                    options.value["type"] as OptionType,
-                    options.key,
-                    options.value["description"] as String,
-                    options.value["required"] as Boolean,
-                    options.value["completions"] as Boolean
+                    op.optionType,
+                    op.optionName,
+                    op.optionDescription,
+                    op.isRequired,
+                    op.hasCompletions
                 )
             }
 
