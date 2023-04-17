@@ -110,6 +110,16 @@ class SlashCommandBuilder private constructor(
         return this
     }
 
+    /**
+     * Add an option to this command.
+     * @param option SlashCommandOption.
+     * @return The current instance of SlashCommandBuilder.
+     */
+    fun addOption(option: SlashCommandOption): SlashCommandBuilder {
+        options[option.optionName] = option
+        return this
+    }
+
 
     /**
      * Build a SlashCommandInfo object with all the information of this command.
