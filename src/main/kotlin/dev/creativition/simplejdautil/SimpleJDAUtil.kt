@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 /**
  *
  */
-object EasyListenerRegistrar {
+object SimpleJDAUtil {
     private val listeners: MutableList<EventListener> = mutableListOf()
     private val adapters: MutableList<ListenerAdapter> = mutableListOf()
     private val slashCommands: MutableList<SlashCommandInfo> = mutableListOf()
