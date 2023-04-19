@@ -1,14 +1,40 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URI
 
 plugins {
     kotlin("jvm") version "1.7.10"
+    id("maven-publish")
+    id("java-library")
 }
 
 group = "dev.creativition"
 version = "0.0.1"
+val localMavenRepository = "file:///D:/myworks/github/maven/"
 
 repositories {
     mavenCentral()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "dev.creativition"
+            artifactId = "simplejdautil"
+            version
+
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven(
+            url = URI(localMavenRepository)
+        )
+    }
 }
 
 dependencies {
