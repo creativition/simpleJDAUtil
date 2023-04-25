@@ -12,4 +12,8 @@ data class SlashCommandOption(
     val isRequired: Boolean,
     val hasCompletions: Boolean
 ) {
+    init {
+        if (optionName.isEmpty())
+            throw IllegalArgumentException("Option name cannot be empty")
+    }
 }
