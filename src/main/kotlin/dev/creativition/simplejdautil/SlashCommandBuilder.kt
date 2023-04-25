@@ -56,11 +56,14 @@ class SlashCommandBuilder private constructor(
      * Adds a subcommand to this command.
      * @param command SlashCommandInfo
      * @throws IllegalStateException When try to add a sub command to sub command instance.
+     * @throws IllegalArgumentException If the provided command is not a sub command.
      * @return The current instance of SlashCommandBuilder.
      */
     fun addSubCommand(command: SlashCommandInfo): SlashCommandBuilder {
         if (isSubCommand)
             throw IllegalStateException("Adding sub command to sub command instance is prohibited.")
+        if (!command.isSubCommand)
+            throw IllegalArgumentException("Provided SlashCommandInfo is not a sub command. command name: ${command.commandName}")
         subCommands.add(command)
         return this
     }
@@ -70,11 +73,16 @@ class SlashCommandBuilder private constructor(
      * Adds a subcommand to this command
      * @param subCommands List of SlashCommandInfo
      * @throws IllegalStateException When try to add a sub command to sub command instance.
+     * @throws IllegalArgumentException If the provided command is not a sub command.
      * @return The current instance of SlashCommandBuilder.
      */
     fun addSubCommand(subCommands: List<SlashCommandInfo>): SlashCommandBuilder {
         if (isSubCommand)
             throw IllegalStateException("Adding sub command to sub command instance is prohibited.")
+        subCommands.forEach {
+            if (!it.isSubCommand)
+                throw IllegalArgumentException("Provided SlashCommandInfo is not a sub command. command name: ${it.commandName}")
+        }
         this.subCommands.addAll(subCommands)
         return this
     }
