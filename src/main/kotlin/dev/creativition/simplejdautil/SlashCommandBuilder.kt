@@ -16,6 +16,7 @@ class SlashCommandBuilder private constructor(
 
         /**
          * Creates a command builder.
+         * @throws IllegalArgumentException If the command name is empty.
          * @return SlashCommandBuilder The command builder.
          */
         @JvmStatic
@@ -27,6 +28,7 @@ class SlashCommandBuilder private constructor(
 
         /**
          * Creates a sub command builder.
+         * @throws IllegalArgumentException If the sub command name is empty.
          * @return SlashCommandBuilder The sub command builder.
          */
         @JvmStatic
@@ -53,11 +55,15 @@ class SlashCommandBuilder private constructor(
     /**
      * Adds a subcommand to this command.
      * @param command SlashCommandInfo
+     * @throws IllegalStateException When try to add a sub command to sub command instance.
+     * @throws IllegalArgumentException If the provided command is not a sub command.
      * @return The current instance of SlashCommandBuilder.
      */
     fun addSubCommand(command: SlashCommandInfo): SlashCommandBuilder {
         if (isSubCommand)
-            throw IllegalArgumentException("Cannot add sub command to a sub command")
+            throw IllegalStateException("Adding sub command to sub command instance is prohibited.")
+        if (!command.isSubCommand)
+            throw IllegalArgumentException("Provided SlashCommandInfo is not a sub command. command name: ${command.commandName}")
         subCommands.add(command)
         return this
     }
@@ -66,9 +72,17 @@ class SlashCommandBuilder private constructor(
     /**
      * Adds a subcommand to this command
      * @param subCommands List of SlashCommandInfo
+     * @throws IllegalStateException When try to add a sub command to sub command instance.
+     * @throws IllegalArgumentException If the provided command is not a sub command.
      * @return The current instance of SlashCommandBuilder.
      */
     fun addSubCommand(subCommands: List<SlashCommandInfo>): SlashCommandBuilder {
+        if (isSubCommand)
+            throw IllegalStateException("Adding sub command to sub command instance is prohibited.")
+        subCommands.forEach {
+            if (!it.isSubCommand)
+                throw IllegalArgumentException("Provided SlashCommandInfo is not a sub command. command name: ${it.commandName}")
+        }
         this.subCommands.addAll(subCommands)
         return this
     }
@@ -77,11 +91,12 @@ class SlashCommandBuilder private constructor(
     /**
      * Remove a specified subcommand from this command.
      * @param subCommandName The name of the subcommand to remove.
+     * @throws IllegalStateException When try to remove a sub command from sub command instance.
      * @return The current instance of SlashCommandBuilder.
      */
     fun removeSubCommand(subCommandName: String): SlashCommandBuilder {
         if (isSubCommand)
-            throw IllegalArgumentException("Cannot use this method while creating a sub command")
+            throw IllegalStateException("You cannot modify sub commands in sub command instance.")
         subCommands.removeIf { it.commandName == subCommandName }
         return this
     }
@@ -103,9 +118,12 @@ class SlashCommandBuilder private constructor(
      * @param type The optionType of option.
      * @param required Whether the option is required.
      * @param completions Whether the option has completions.
+     * @throws IllegalStateException When optionName is empty.
      * @return The current instance of SlashCommandBuilder.
      */
     fun addOption(optionName: String, description: String, type: OptionType, required: Boolean, completions: Boolean): SlashCommandBuilder {
+        if (optionName.isEmpty())
+            throw IllegalArgumentException("Option name cannot be empty")
         options[optionName] = SlashCommandOption(optionName, description, type, required, completions)
         return this
     }
