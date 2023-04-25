@@ -73,10 +73,8 @@ class SlashCommandBuilder private constructor(
      * @return The current instance of SlashCommandBuilder.
      */
     fun addSubCommand(subCommands: List<SlashCommandInfo>): SlashCommandBuilder {
-        subCommands.forEach {
-            if (it.isSubCommand)
-                throw IllegalStateException("Adding sub command to sub command instance is prohibited.")
-        }
+        if (isSubCommand)
+            throw IllegalStateException("Adding sub command to sub command instance is prohibited.")
         this.subCommands.addAll(subCommands)
         return this
     }
