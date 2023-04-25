@@ -16,6 +16,7 @@ class SlashCommandBuilder private constructor(
 
         /**
          * Creates a command builder.
+         * @throws IllegalArgumentException If the command name is empty.
          * @return SlashCommandBuilder The command builder.
          */
         @JvmStatic
@@ -27,6 +28,7 @@ class SlashCommandBuilder private constructor(
 
         /**
          * Creates a sub command builder.
+         * @throws IllegalArgumentException If the sub command name is empty.
          * @return SlashCommandBuilder The sub command builder.
          */
         @JvmStatic
@@ -53,6 +55,7 @@ class SlashCommandBuilder private constructor(
     /**
      * Adds a subcommand to this command.
      * @param command SlashCommandInfo
+     * @throws IllegalStateException When try to add a sub command to sub command instance.
      * @return The current instance of SlashCommandBuilder.
      */
     fun addSubCommand(command: SlashCommandInfo): SlashCommandBuilder {
@@ -66,6 +69,7 @@ class SlashCommandBuilder private constructor(
     /**
      * Adds a subcommand to this command
      * @param subCommands List of SlashCommandInfo
+     * @throws IllegalStateException When try to add a sub command to sub command instance.
      * @return The current instance of SlashCommandBuilder.
      */
     fun addSubCommand(subCommands: List<SlashCommandInfo>): SlashCommandBuilder {
@@ -81,6 +85,7 @@ class SlashCommandBuilder private constructor(
     /**
      * Remove a specified subcommand from this command.
      * @param subCommandName The name of the subcommand to remove.
+     * @throws IllegalStateException When try to remove a sub command from sub command instance.
      * @return The current instance of SlashCommandBuilder.
      */
     fun removeSubCommand(subCommandName: String): SlashCommandBuilder {
@@ -107,6 +112,7 @@ class SlashCommandBuilder private constructor(
      * @param type The optionType of option.
      * @param required Whether the option is required.
      * @param completions Whether the option has completions.
+     * @throws IllegalStateException When optionName is empty.
      * @return The current instance of SlashCommandBuilder.
      */
     fun addOption(optionName: String, description: String, type: OptionType, required: Boolean, completions: Boolean): SlashCommandBuilder {
